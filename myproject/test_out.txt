@@ -1,0 +1,19 @@
+Creating test database for alias 'default'...
+..F.......
+======================================================================
+FAIL: test_future_question (polls.tests.QuestionIndexViewTests.test_future_question)
+Questions with a pub_date in the future aren't displayed on
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Administrator\myproject\polls\tests.py", line 66, in test_future_question
+    self.assertContains(response, "No polls are available.")
+AssertionError: False is not true : Couldn't find 'No polls are available.' in the following response
+b'    \n<!DOCTYPE html>\n<html>\n<head>\n    <title>Polls</title>\n    <link rel="stylesheet" href="/static/polls/style.css">\n</head>\n<body>\n\n<h1>Anketler</h1>\n\n\n<p>Hen\xc3\xbcz anket yok.</p>\n\n\n</body>\n</html>'
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.026s
+
+FAILED (failures=1)
+Destroying test database for alias 'default'...
+Found 10 test(s).
+System check identified no issues (0 silenced).

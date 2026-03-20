@@ -1,0 +1,62 @@
+{% extends "polls/base.html" %}
+
+{% block title %}Kayıt Ol - Reliable Survey{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-10 p-8">
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-extrabold text-gray-900">Kayıt Ol</h2>
+        <p class="text-gray-500 mt-2">Sisteme katılarak kendi anketlerini oluştur.</p>
+    </div>
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+        
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="p-3 text-sm rounded-lg {% if message.tags == 'error' %}bg-red-50 text-red-700 border border-red-200{% else %}bg-green-50 text-green-700 border border-green-200{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        {% if form.non_field_errors %}
+            <div class="mb-4 p-3 text-sm rounded-lg bg-red-50 text-red-700 border border-red-200">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+                <div class="mt-1">
+                    {{ field }}
+                </div>
+                {% if field.help_text %}
+                    <p class="text-xs text-gray-500 mt-1">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <div>
+            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Hesap Oluştur
+            </button>
+        </div>
+    </form>
+    <div class="mt-6 text-center">
+        <p class="text-sm text-gray-600">Zaten hesabın var mı? <a href="{% url 'polls:login' %}" class="font-medium text-blue-600 hover:text-blue-500">Giriş Yap</a></p>
+    </div>
+</div>
+<!-- Add Tailwind forms plugin classes to inputs via JS since Django renders them bare -->
+<script>
+    document.querySelectorAll('input').forEach(el => {
+        if(el.type !== 'submit' && el.type !== 'hidden') {
+            el.classList.add('shadow-sm', 'focus:ring-blue-500', 'focus:border-blue-500', 'block', 'w-full', 'sm:text-sm', 'border-gray-300', 'rounded-md', 'p-2', 'border');
+        }
+    });
+</script>
+{% endblock %}

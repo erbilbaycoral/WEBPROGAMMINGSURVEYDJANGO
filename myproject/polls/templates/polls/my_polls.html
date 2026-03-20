@@ -1,0 +1,60 @@
+{% extends "polls/base.html" %}
+
+{% block title %}Anketlerim - Reliable Survey{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-extrabold text-gray-900">Oluşturduğum Anketler</h1>
+        <a href="{% url 'polls:create_poll' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition">Yeni Anket</a>
+    </div>
+
+    {% if messages %}
+        <div class="mb-6">
+            {% for message in messages %}
+                <div class="p-4 rounded-lg bg-green-50 text-green-700 border border-green-200">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if questions %}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <ul class="divide-y divide-gray-100">
+                {% for question in questions %}
+                <li class="p-6 hover:bg-gray-50 transition-colors flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">
+                            <a href="{% url 'polls:detail' question.id %}" class="hover:text-blue-600">{{ question.question_text }}</a>
+                        </h3>
+                        <p class="text-sm text-gray-500">
+                            {{ question.pub_date|date:"d M Y" }} • {{ question.country }} • {{ question.question_type }}
+                            {% if question.question_type == 'Bölgesel' %}({{ question.region }}){% endif %}
+                        </p>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 w-full md:w-auto mt-4 md:mt-0">
+                        <span class="text-sm {% if question.is_private_results %}text-red-600 bg-red-50{% else %}text-green-600 bg-green-50{% endif %} px-3 py-1 rounded-full font-medium whitespace-nowrap">
+                            {% if question.is_private_results %}🔒 Sonuçlar Gizli{% else %}👁️ Herkese Açık{% endif %}
+                        </span>
+                        
+                        <form action="{% url 'polls:toggle_privacy' question.id %}" method="post" class="ml-auto md:ml-0">
+                            {% csrf_token %}
+                            <button type="submit" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-1.5 px-4 rounded-lg transition whitespace-nowrap">
+                                {% if question.is_private_results %}Açık Yap{% else %}Gizle{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <h3 class="mt-2 text-lg font-medium text-gray-900">Henüz Anketin Yok</h3>
+            <p class="mt-1 text-gray-500">Kendi anketini yayınla ve insanların ne düşündüğünü gör.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

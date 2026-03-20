@@ -1,0 +1,67 @@
+{% extends "polls/base.html" %}
+
+{% block content %}
+<div class="mb-8 flex justify-between items-center">
+    <div>
+        <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">Anketler</h1>
+        <p class="mt-2 text-lg text-gray-600">Tercihlerini yap ve sonuçları gör!</p>
+    </div>
+    
+    <!-- Region Filter Form -->
+    <form method="get" class="flex gap-2 items-center bg-white p-2 rounded-lg shadow-sm border border-gray-100">
+        <label for="region" class="text-sm font-medium text-gray-700">Bölge Seç:</label>
+        <select name="region" id="region" class="border-gray-300 rounded-md text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 py-1 pl-2 pr-8" onchange="this.form.submit()">
+            <option value="">Tümü</option>
+            {% for code, name in region_choices %}
+                <option value="{{ code }}" {% if request.GET.region == code %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+            <!-- Fallback if region_choices is not in context -->
+            {% if not region_choices %}
+                <option value="Marmara" {% if request.GET.region == 'Marmara' %}selected{% endif %}>Marmara</option>
+                <option value="Ege" {% if request.GET.region == 'Ege' %}selected{% endif %}>Ege</option>
+                <option value="İç Anadolu" {% if request.GET.region == 'İç Anadolu' %}selected{% endif %}>İç Anadolu</option>
+                <option value="Akdeniz" {% if request.GET.region == 'Akdeniz' %}selected{% endif %}>Akdeniz</option>
+                <option value="Karadeniz" {% if request.GET.region == 'Karadeniz' %}selected{% endif %}>Karadeniz</option>
+                <option value="Doğu Anadolu" {% if request.GET.region == 'Doğu Anadolu' %}selected{% endif %}>Doğu Anadolu</option>
+                <option value="Güneydoğu Anadolu" {% if request.GET.region == 'Güneydoğu Anadolu' %}selected{% endif %}>Güneydoğu Anadolu</option>
+                <option value="Genel" {% if request.GET.region == 'Genel' %}selected{% endif %}>Genel (Tüm Türkiye)</option>
+            {% endif %}
+        </select>
+    </form>
+</div>
+
+{% if latest_question_list %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for question in latest_question_list %}
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden group">
+            <div class="p-6">
+                <span class="text-xs font-semibold tracking-wider text-blue-600 uppercase mb-2 block">
+                    🌍 {{ question.country }} | {{ question.question_type }} {% if question.question_type == 'Bölgesel' %}({{ question.region }}){% endif %}
+                </span>
+                <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                    <a href="{% url 'polls:detail' question.id %}" class="block">{{ question.question_text }}</a>
+                </h3>
+                <p class="text-sm text-gray-500 mb-4 text-xs">Yayınlanma: {{ question.pub_date|date:"d M Y" }}</p>
+                <a href="{% url 'polls:detail' question.id %}" class="inline-flex items-center justify-center w-full px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition">
+                    Oy Kullan
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+{% else %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">Anket Bulunamadı</h3>
+        <p class="mt-1 text-sm text-gray-500">Henüz anket yok. İlk anketi sen oluşturmak ister misin?</p>
+        <div class="mt-6">
+            <a href="{% url 'polls:create_poll' %}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                Anket Oluştur
+            </a>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}
